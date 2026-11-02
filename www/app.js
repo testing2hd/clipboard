@@ -1,5 +1,16 @@
-const LR = Capacitor.registerPlugin('LinkRouter');
 const $ = (s) => document.querySelector(s);
+window.addEventListener('error', (e) => { const m = $('#msg'); if (m) m.textContent = 'Script error: ' + e.message; });
+window.addEventListener('unhandledrejection', (e) => { const m = $('#msg'); if (m) m.textContent = 'Error: ' + ((e.reason && e.reason.message) || e.reason); });
+// No bundler here, so call the native bridge directly instead of Capacitor.registerPlugin.
+const LR = new Proxy({}, {
+  get: (_, method) => (opts) => {
+    const C = window.Capacitor;
+    if (!C) return Promise.reject(new Error('Capacitor bridge not found'));
+    if (typeof C.nativePromise === 'function') return C.nativePromise('LinkRouter', method, opts || {});
+    if (typeof C.registerPlugin === 'function') return C.registerPlugin('LinkRouter')[method](opts || {});
+    return Promise.reject(new Error('Capacitor bridge has no nativePromise'));
+  },
+});
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let cfg = { apps: [] }, installedApps = [], status = null, saveTimer;
 
@@ -87,6 +98,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) refr
 setInterval(() => { if (!document.hidden) refresh(); }, 2000);
 
 (async () => {
+  $('#svc').checked = false;
   try { cfg = await LR.getConfig(); } catch (e) { $('#msg').textContent = 'Error: ' + (e.message || e); }
   renderApps();
   refresh();
