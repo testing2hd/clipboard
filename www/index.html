@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Link Router</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>Link Router</h1>
+
+  <section class="main-card">
+    <div class="switch-row">
+      <div>
+        <h2>Detect copied links</h2>
+        <p id="msg" class="msg">Loading...</p>
+      </div>
+      <label class="toggle"><input type="checkbox" id="svc" aria-label="Detect copied links"><span></span></label>
+    </div>
+  </section>
+
+  <section id="setup" hidden>
+    <h2>Finish setup</h2>
+    <ul id="todo"></ul>
+  </section>
+
+  <section>
+    <h2>Apps</h2>
+    <div id="apps"></div>
+    <button class="ghost" id="addApp">Add app</button>
+  </section>
+
+  <button class="ghost wide" id="test">Show test popup</button>
+</main>
+<div id="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
